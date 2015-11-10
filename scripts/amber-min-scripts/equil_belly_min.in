@@ -1,0 +1,25 @@
+MD production
+ &cntrl
+
+   nmropt = 0,
+   igb = 0, ntb = 2, ntpr = 25, ntwx = 500,
+
+   cut = 9.0, 
+   ntx = 1,
+   irest = 0,
+   tempi = 300.0, temp0 = 300.0, 
+   ntt = 1, tautp = 0.5, taup = 0.5,
+   ntp = 1,
+
+   imin = 1,
+   maxcyc = 1000, ncyc = 1000,
+
+   ntc = 1, ntf = 1, tol = 0.00000001,
+
+   ibelly = 1,
+   bellymask=':25-9999999'
+
+ &end
+ &ewald
+   ew_type = 0, skinnb = 2.0, nbflag = 1, use_pme = 1, vdwmeth = 1,
+ &end

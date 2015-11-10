@@ -1,0 +1,14 @@
+trajin traj.20 1 5 1
+
+trajout test.strip pdb
+
+prnlev 0
+
+center :26 mass origin
+#center :27-78 mass origin
+prnlev 5
+image origin first
+image origin center
+rms first mass :1-78
+
+strip :WAT

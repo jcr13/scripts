@@ -1,0 +1,20 @@
+*************************************************************************
+*****************************    eq4.in     *****************************
+*************************************************************************
+Equilibrating the system with 4 kcal/mol restraints on DNA, during 50ps,
+at constant T= 300K & P= 1Atm and coupling = 0.2
+ &cntrl
+    imin=0, ntx=1, ntpr=500, ntwr=500, ntwx=500, ntwe=500, 
+    nscm=5000,
+    ntf=2, ntc=2,
+    ntb=2, ntp=1, tautp=0.2, taup=0.2,
+    nstlim=25000, t=0.0, dt=0.002,
+    cut=9.0,
+    ntt=1,
+    ntr=1,
+   restraintmask=':1-25',  
+   restraint_wt=4.0,
+ &end
+ &ewald
+    ew_type = 0, skinnb = 1.0,
+ &end

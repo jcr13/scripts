@@ -1,0 +1,17 @@
+echo "===================
+       EMBER
+=====================
+"
+/uufs/ember.arches/sys/bin/mdiag -n -v | awk '{print $2,$13}' | grep Idle | sort | uniq -c
+
+echo "===================
+       SANDDUNEARCH 
+=====================
+"
+/uufs/sanddunearch.arches/sys/bin/mdiag -n -v | awk '{print $2,$13}' | grep Idle | sort | uniq -c
+echo "===================
+       UPDRAFT
+=====================
+"
+/uufs/updraft.arches/sys/bin/mdiag -n -v | awk '{print $2,$13}' | grep Idle | sort | uniq -c
+

@@ -1,0 +1,17 @@
+*************************************************************************
+*****************************    mini5.in   *****************************
+*************************************************************************
+Minimzing the system with 5 kcal/mol restraints on DNA, 500 steps 
+of steepest descent and 500 of conjugated gradient
+ &cntrl
+   imin=1, ntx=1, irest=0, ntpr=50, ntf=1, ntb=1,
+   cut=9.0, nsnb=10, ntr=1, maxcyc=1000, ncyc=500, ntmin=1,
+   restraintmask=':1-25',
+   restraint_wt=5.0,
+ &end
+ &ewald
+    ew_type = 0, skinnb = 1.0,
+ &end
+ &wt
+    type = 'END',
+ &end

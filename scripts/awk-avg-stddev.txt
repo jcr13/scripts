@@ -1,0 +1,3 @@
+awk '{sum+=$1} END {if (NR>0) print sum/NR}' 1xww-49-131-distance.1-3.dat 
+
+awk '{sum+=$1; sumsq+=$1*$1} END {print sqrt(sumsq/NR - (sum/NR)**2)}' 1xww-49-131-distance.1-3.dat

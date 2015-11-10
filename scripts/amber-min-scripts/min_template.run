@@ -1,0 +1,45 @@
+#!/bin/csh
+#PBS -N cascambiar-min
+#PBS -l walltime=5:00:00:00,nodes=6:ppn=8
+#PBS -m be
+#PBS -M rodrigogalindo@gmail.com
+#PBS -j oe
+#PBS -A cheatham
+
+set echo
+
+source ~u0577382/mvapich2/telluride/1.9a/etc/mvapich2.csh
+setenv AMBERHOME ~u0577382/amber12-te
+setenv runpmemd "mpirun_rsh -np 48 -hostfile $PBS_NODEFILE $AMBERHOME/bin/sander.MPI"
+
+set SCRIPTS="~/cas-mmpbsa/inputs"
+set sim=cambiar
+
+cd ~/cas-mmpbsa/$sim/
+
+ $runpmemd -i $SCRIPTS/mini.in -o mini.out -p ddd_$sim.topo -c ddd_$sim.coords.rand \
+ -ref ddd_$sim.coords.rand -r mini.rst -x mini.trj -e mini.ene
+
+ $runpmemd -i $SCRIPTS/heat.in -o heat.out -p ddd_$sim.topo -c mini.rst -ref mini.rst -r heat.rst -x heat.trj -e heat.ene
+
+ $runpmemd -i $SCRIPTS/mini5.in -o mini5.out -p ddd_$sim.topo -c heat.rst -ref heat.rst -r mini5.rst -x mini5.trj -e mini5.ene
+
+ $runpmemd -i $SCRIPTS/eq5.in -o eq5.out -p ddd_$sim.topo -c mini5.rst -ref mini5.rst -r eq5.rst -x eq5.trj -e eq5.ene
+
+ $runpmemd -i $SCRIPTS/mini4.in -o mini4.out -p ddd_$sim.topo -c eq5.rst -ref eq5.rst -r mini4.rst -x mini4.trj -e mini4.ene
+
+ $runpmemd -i $SCRIPTS/eq4.in -o eq4.out -p ddd_$sim.topo -c mini4.rst -ref mini4.rst -r eq4.rst -x eq4.trj -e eq4.ene
+
+ $runpmemd -i $SCRIPTS/mini3.in -o mini3.out -p ddd_$sim.topo -c eq4.rst -ref eq4.rst -r mini3.rst -x mini3.trj -e mini3.ene
+
+ $runpmemd -i $SCRIPTS/eq3.in -o eq3.out -p ddd_$sim.topo -c mini3.rst -ref mini3.rst -r eq3.rst -x eq3.trj -e eq3.ene
+
+ $runpmemd -i $SCRIPTS/mini2.in -o mini2.out -p ddd_$sim.topo -c eq3.rst -ref eq3.rst -r mini2.rst -x mini2.trj -e mini2.ene
+
+ $runpmemd -i $SCRIPTS/eq2.in -o eq2.out -p ddd_$sim.topo -c mini2.rst -ref mini2.rst -r eq2.rst -x eq2.trj -e eq2.ene
+
+ $runpmemd -i $SCRIPTS/mini1.in -o mini1.out -p ddd_$sim.topo -c eq2.rst -ref eq2.rst -r mini1.rst -x mini1.trj -e mini1.ene
+
+ $runpmemd -i $SCRIPTS/eq1.in -o eq1.out -p ddd_$sim.topo -c mini1.rst -ref mini1.rst -r eq1.rst -x eq1.trj -e eq1.ene
+
+ $runpmemd -i $SCRIPTS/eq05.in -o eq05.out -p ddd_$sim.topo -c eq1.rst -ref eq1.rst -r eq05.rst -x eq05.trj -e eq05.ene
