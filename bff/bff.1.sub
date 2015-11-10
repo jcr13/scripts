@@ -1,0 +1,43 @@
+#!/bin/bash
+#PBS -A gk4
+#PBS -l walltime=6:32:00,nodes=220:ppn=16:xk
+#PBS -l geometry=7x2x8
+#PBS -N bff.1
+#PBS -e $PBS_JOBID.err
+#PBS -o $PBS_JOBID.out
+#PBS -m abe
+#PBS -M jamesr@mind.net
+set -x
+
+. /opt/modules/default/init/bash
+module unload PrgEnv-cray
+module load PrgEnv-gnu
+module load netcdf
+module load cudatoolkit
+
+export AMBERHOME=/projects/sciteam/jn6/GIT/amber-gnu
+export PATH=$AMBERHOME/bin:$PATH
+export LD_LIBRARY_PATH=$AMBERHOME/lib:$LD_LIBRARY_PATH
+SANDER=$AMBERHOME/bin/pmemd.cuda
+
+cd $PBS_O_WORKDIR
+
+#for sim in 1 2 3;
+#do
+    cd 1/
+
+    cur=`perl ~/scripts/next-RST_docked-complex.perl | tail -1`
+    pre=`expr $cur - 1`  
+    
+    aprun -n 1 -N 1 $SANDER -O -i ../md.1.in -o OUT/out.$cur -p ../docked-complex.hmr.prmtop \
+    -c RST/rst.$pre -r RST/rst.$cur -x TRAJ/traj.$cur -inf mdinfo &
+
+    cd ../
+
+#done
+
+wait
+
+#sleep 60
+#cd $PBS_O_WORKDIR
+#qsub image.run

@@ -1,0 +1,15 @@
+----------------------------------------
+Begin Torque Prologue on nid25258
+at Wed Nov  4 10:28:29 CST 2015
+Job Id:			2531003.nid11293
+Username:		jamesrob
+Group:			PRAC_gk4
+Job name:		bff.1
+Requested resources:	neednodes=220:ppn=16:xk,nodes=220:ppn=16:xk,walltime=06:32:00
+Queue:			normal
+Account:		gk4
+End Torque Prologue:  0.031 elapsed
+----------------------------------------
+
+  Unit    5 Error on OPEN: ../md.1.in                                                                                                                                                                                                                                                      
+Application 28778873 resources: utime ~0s, stime ~0s, Rss ~5632, inblocks ~7949, outblocks ~22564
