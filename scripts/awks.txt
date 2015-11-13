@@ -1,2 +1,0 @@
-##calculating the average of values in column 1 of dS.avg
-cat dS.avg | awk '{sum+=$1} END { print sum/NR}'

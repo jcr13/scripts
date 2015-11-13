@@ -1,7 +1,0 @@
-#This allows one to plot two heat maps on the same plot, one on top the other on the bottom
-#In this case I have two files, each symmetric heat maps (complex-dccm.1.gnu and ../../dna/analysis/dna-dccm.gnu)
-#I want the final plot to have the complex data on top and dna data on bottom
-#Using awk I change the values in the matrix and get complex-v-dna_dccm.1.gnu
-#complex-v-dna_dccm.1.gnu can be plotted in gnuplot
-#gnuplot: set pm3d map; splot "complex-v-dna_dccm.1.gnu"
-paste complex-dccm.1.gnu ../../dna/analysis/dna-dccm.gnu | awk '{if ($1<=$2) print $1 "\t" $2 "\t" $3; else print $1 "\t" $2 "\t" $6;}' > complex-v-dna_dccm.1.gnu
