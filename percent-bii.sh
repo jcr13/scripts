@@ -35,3 +35,6 @@ do
     echo "step C $i fraction bii is $fracbii"
     echo "$fracbii" >> percent-bii.C.dat
 done
+
+rm tmpW*dat
+rm tmpC*dat
