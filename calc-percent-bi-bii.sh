@@ -27,8 +27,7 @@ trajin $WORKDIR/$sys-analysis/$copy/${sys}_$copy.nc 1 100 1
 multidihedral epze epsilon zeta resrange $i out epsi-zeta.$copy.$i.dat range360
 run
 
-hist epze[epsilon]:$i,0,360,1,* out epsi-hist.$copy.$i.dat
-hist epze[zeta]:$i,0,360,1,* out zeta-hist.$copy.$i.dat
+multihist epze[*] out epsi-zeta.hist.$copy.$i.dat bins 360 min 0 max 360 norm
 EOF
         done
     
