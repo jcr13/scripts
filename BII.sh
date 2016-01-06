@@ -69,12 +69,7 @@ datafilter EZdiff.$i min 0 max 360 name BII.$i
 PctBII.$i = avg(BII.$i)
 EOF
       done
-    # Generate cpptraj input for calculating overall %BII
-    cat >> $INPUT <<EOF
 
-datafilter BII.* min 0 max 0 name overallPctBII
-PctBIIoverall = avg(overallPctBII)
-EOF
       # Write out raw BI and BII as well as percent BI and BII. Use the
       # 'invert' keyword for the latter so that the values are in a column
       # instead of a row.
@@ -84,7 +79,6 @@ writedata $OUTDIR/bi.dat BI.*
 writedata $OUTDIR/bii.dat BII.*
 writedata $OUTDIR/PctBi.dat invert PctBI.*
 writedata $OUTDIR/PctBii.dat invert PctBII.*
-writedata $OUTDIR/PctBii.overall.dat invert PctBIIoverall
 EOF
       # Run cpptraj
       if [[ $DEBUG -ne 0 ]] ; then
