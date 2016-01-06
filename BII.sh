@@ -15,8 +15,8 @@ CPPTRAJ=`which cpptraj`
 # If DEBUG is set to 1 no runs, only first script will be generated
 DEBUG=0
 
-for FF in bsc0 ; do
-  for WAT in tip3p ; do
+for FF in bsc0 bsc1 ez1ol4 ol15 ; do
+  for WAT in tip3p opc ; do
     cd $WORKDIR # Return us to the original working directory
     MYDIR=$SYS/$FF/$WAT/percent-bii
     if [[ ! -e $MYDIR ]] ; then
@@ -63,12 +63,18 @@ EOF
         cat >> $INPUT <<EOF
 
 EZdiff.$i = EZ[epsilon]:$i - EZ[zeta]:$i
-datafilter EZdiff.$i min -360 max 0   name BI.$i
+datafilter EZdiff.$i min -360 max 0 name BI.$i
 PctBI.$i = avg(BI.$i)
-datafilter EZdiff.$i min 0    max 360 name BII.$i
+datafilter EZdiff.$i min 0 max 360 name BII.$i
 PctBII.$i = avg(BII.$i)
 EOF
       done
+    # Generate cpptraj input for calculating overall %BII
+    cat >> $INPUT <<EOF
+
+datafilter BII.* min 0 max 0 name overallPctBII
+PctBIIoverall = avg(overallPctBII)
+EOF
       # Write out raw BI and BII as well as percent BI and BII. Use the
       # 'invert' keyword for the latter so that the values are in a column
       # instead of a row.
@@ -78,6 +84,7 @@ writedata $OUTDIR/bi.dat BI.*
 writedata $OUTDIR/bii.dat BII.*
 writedata $OUTDIR/PctBi.dat invert PctBI.*
 writedata $OUTDIR/PctBii.dat invert PctBII.*
+writedata $OUTDIR/PctBii.overall.dat invert PctBIIoverall
 EOF
       # Run cpptraj
       if [[ $DEBUG -ne 0 ]] ; then
