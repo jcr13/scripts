@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: ISO-8859-1 -*-
 #---------------------------------------------------------------------------#
 # Function: Calculate the average value(s) of an xmgrace plot.              #
