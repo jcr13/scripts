@@ -14,8 +14,11 @@ res = ['ARG', 'HIS', 'LYS', 'ASP', 'GLU', 'SER', 'THR', 'ASN', 'GLN', 'CYS',
         'GLY', 'PRO', 'ALA', 'VAL', 'ILE', 'LEU', 'MET', 'PHE', 'TYR', 'TRP']
 pdbdir = "/home/james/dill/res-res_contacts/pdbs"
 contactsdir = "/home/james/dill/res-res_contacts/contacts_dat"
-statsdir = "/home/james/dill/res-res_contacts/contact_stats"
-statslist = os.listdir(statsdir)
+cpptrajdir = "/home/james/dill/res-res_contacts/cpptraj_in"
+statsdir = "/home/james/dill/res-res_contacts/contacts_stats"
+pdbstatsdir = "/home/james/dill/res-res_contacts/contacts_pdb_stats"
+sumdir = "/home/james/dill/res-res_contacts/contacts_sum"
+statslist = os.listdir(pdbstatsdir)
 pdblist = os.listdir(pdbdir)
 
 # generate all possible residue-residue pairs from res list and write to file
@@ -30,7 +33,7 @@ def residue_pairs(reslist):
 
 # write cpptraj input for each residue residue contact
 def cpptraj_in(sys, reslist):
-    infile = open('cpptraj.%s.in' % sys, 'w') 
+    infile = open("%s/cpptraj.%s.in" % (cpptrajdir, sys), "w") 
     parm = "parm %s/%s\n" % (pdbdir, sys)
     infile.write(parm)
     trajin = "trajin %s/%s 1 1 1\n \n" % (pdbdir, sys)
@@ -42,13 +45,14 @@ def cpptraj_in(sys, reslist):
                 % (res1, res2, contactsdir, sys, res1, res2)
         infile.write(contacts)
         # run cpptraj
-        cpptraj = subprocess.call("cpptraj -i cpptraj.%s.in > cpptraj.%s.out" % (sys, sys), shell=True)
+        cpptraj = subprocess.call("cpptraj -i %s/cpptraj.%s.in > %s/cpptraj.%s.out" \
+                % (cpptrajdir, sys, cpptrajdir, sys), shell=True)
     infile.close()
 
 # calculate statistics on all of the res-res contacts
 def contact_stats(sys, reslist):
     for each_sys in sys:
-        statfile = open("%s/%s.dat" % (statsdir, sys), 'w')
+        statfile = open("%s/%s.dat" % (pdbstatsdir, sys), 'w')
         for res1, res2 in itertools.combinations(reslist, 2):
             res1 = res1.strip()
             res2 = res2.strip()
@@ -72,7 +76,7 @@ def get_count(reslist):
         res2 = res2.strip()
         outfile = open("%s/%s-%s.dat" % (statsdir, res1, res2), 'w')
         for eachfile in statslist:
-            statfile = "%s/%s" % (statsdir, eachfile)
+            statfile = "%s/%s" % (pdbstatsdir, eachfile)
             with open("%s" % (statfile)) as f:
                 for line in f: 
                     line = line.strip()
@@ -90,7 +94,7 @@ def sum_total(reslist):
         res1 = res1.strip()
         res2 = res2.strip()
         readfile = "%s/%s-%s.dat" % (statsdir, res1, res2)
-        outfile = "%s/%s-%s.sum.dat" % (statsdir, res1, res2)
+        outfile = "%s/%s-%s.sum.dat" % (sumdir, res1, res2)
         total = 0
         with open("%s" % readfile, 'r') as inp, open("%s" % outfile, "w") as outp:
             for line in inp:
