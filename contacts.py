@@ -10,14 +10,16 @@ import numpy as np
 from itertools import izip
 from subprocess import call
 
+pwd = os.getcwd()
+
 res = ['ARG', 'HIS', 'LYS', 'ASP', 'GLU', 'SER', 'THR', 'ASN', 'GLN', 'CYS', 
         'GLY', 'PRO', 'ALA', 'VAL', 'ILE', 'LEU', 'MET', 'PHE', 'TYR', 'TRP']
-pdbdir = "/home/james/dill/res-res_contacts/pdbs"
-contactsdir = "/home/james/dill/res-res_contacts/contacts_dat"
-cpptrajdir = "/home/james/dill/res-res_contacts/cpptraj_in"
-statsdir = "/home/james/dill/res-res_contacts/contacts_stats"
-pdbstatsdir = "/home/james/dill/res-res_contacts/contacts_pdb_stats"
-sumdir = "/home/james/dill/res-res_contacts/contacts_sum"
+pdbdir = "%s/pdbs" % pwd
+contactsdir = "%s/contacts_dat" % pwd
+cpptrajdir = "%s/cpptraj_in" % pwd
+statsdir = "%s/contacts_stats" % pwd
+pdbstatsdir = "%s/contacts_pdb_stats" % pwd
+sumdir = "%s/contacts_sum" % pwd
 statslist = os.listdir(pdbstatsdir)
 pdblist = os.listdir(pdbdir)
 
@@ -41,13 +43,14 @@ def cpptraj_in(sys, reslist):
     for res1, res2 in itertools.combinations(reslist, 2):
         res1 = res1.strip()
         res2 = res2.strip()
-        contacts = "nativecontacts :%s :%s resout %s/%s_%s-%s.dat distance 7.0 byresidue resoffset 4\nrun\n \n" \
-                % (res1, res2, contactsdir, sys, res1, res2)
+        contacts = "nativecontacts :%s :%s resout %s/%s_%s-%s.dat distance 7.0 byresidue resoffset 4\nrun\nsilenceactions \n" % (res1, res2, contactsdir, sys, res1, res2)
         infile.write(contacts)
         # run cpptraj
-        cpptraj = subprocess.call("cpptraj -i %s/cpptraj.%s.in > %s/cpptraj.%s.out" \
-                % (cpptrajdir, sys, cpptrajdir, sys), shell=True)
+        #cpptraj = subprocess.call("cpptraj -i %s/cpptraj.%s.in > %s/cpptraj.%s.out" \
+        #        % (cpptrajdir, sys, cpptrajdir, sys), shell=True)
     infile.close()
+
+    call(["cpptraj", "-i", "%s/cpptraj.%s.in" % (cpptrajdir, sys)])
 
 # calculate statistics on all of the res-res contacts
 def contact_stats(sys, reslist):
