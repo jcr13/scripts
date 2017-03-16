@@ -1,0 +1,20 @@
+#!/bin/bash
+
+sys=1e0l
+WORKDIR=/cavern/jamesr/strand-pairing/$sys
+res=$(awk 'FNR == 8 {print $2}' $WORKDIR/$sys.parm7 )
+export AMBERHOME="/home/jamesr/bin/amber16"
+source $AMBERHOME/amber.sh
+export cpptraj="$AMBERHOME/bin/cpptraj"
+
+# rmsd of production traj to reference
+for solv in tip3p_md gb_md
+do
+    $cpptraj << EOF > $WORKDIR/$solv/rmsd-to-ref.out
+parm $WORKDIR/$solv/$sys.hmr.parm7 [traj] 
+parm $WORKDIR/$sys.parm7 [reference]
+trajin $WORKDIR/$solv/TRAJ/prod.nc parm [traj]
+reference $WORKDIR/$sys.rst7 parm [reference]
+rms reference :1-$res@N,CA,C,O out $WORKDIR/$solv/rmsd-to-ref.dat
+EOF
+done
