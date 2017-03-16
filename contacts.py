@@ -26,7 +26,7 @@ pdblist = os.listdir(pdbdir)
 # generate all possible residue-residue pairs from res list and write to file
 def residue_pairs(reslist):
     pair_file = open('pair_list.dat', 'w')
-    for res1, res2 in itertools.combinations(reslist, 2):
+    for res1, res2 in itertools.combinations_with_replacement(reslist, 2):
         res1 = res1.strip()
         res2 = res2.strip()
         new_pair = "%s \t %s" % (res1, res2)
@@ -40,7 +40,7 @@ def cpptraj_in(sys, reslist):
     infile.write(parm)
     trajin = "trajin %s/%s 1 1 1\n \n" % (pdbdir, sys)
     infile.write(trajin)
-    for res1, res2 in itertools.combinations(reslist, 2):
+    for res1, res2 in itertools.combinations_with_replacement(reslist, 2):
         res1 = res1.strip()
         res2 = res2.strip()
         contacts = "nativecontacts :%s :%s resout %s/%s_%s-%s.dat distance 7.0 byresidue resoffset 4\nrun\nsilenceactions \n" % (res1, res2, contactsdir, sys, res1, res2)
@@ -56,7 +56,7 @@ def cpptraj_in(sys, reslist):
 def contact_stats(sys, reslist):
     for each_sys in sys:
         statfile = open("%s/%s.dat" % (pdbstatsdir, sys), 'w')
-        for res1, res2 in itertools.combinations(reslist, 2):
+        for res1, res2 in itertools.combinations_with_replacement(reslist, 2):
             res1 = res1.strip()
             res2 = res2.strip()
             if os.path.isfile("%s/%s_%s-%s.dat" % (contactsdir, sys, res1, res2)):
@@ -74,7 +74,7 @@ def contact_stats(sys, reslist):
 # to new outfile e.g. if there are 4 pdb files, the outfile will have 4 values,
 # 1 for each system
 def get_count(reslist):
-    for res1, res2 in itertools.combinations(reslist, 2):
+    for res1, res2 in itertools.combinations_with_replacement(reslist, 2):
         res1 = res1.strip()
         res2 = res2.strip()
         outfile = open("%s/%s-%s.dat" % (statsdir, res1, res2), 'w')
@@ -93,7 +93,7 @@ def get_count(reslist):
 # res contacts over all systems studied e.g. If there were 4 systems and 
 # 0, 0, 17, 5 contacts b/w ALA-VAL in the 4 systems the total will be 22
 def sum_total(reslist):
-    for res1, res2 in itertools.combinations(reslist, 2):
+    for res1, res2 in itertools.combinations_with_replacement(reslist, 2):
         res1 = res1.strip()
         res2 = res2.strip()
         readfile = "%s/%s-%s.dat" % (statsdir, res1, res2)
