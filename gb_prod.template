@@ -1,0 +1,39 @@
+#!/bin/bash
+#$ -S /bin/bash
+#$ -R yes
+#$ -cwd
+#$ -V
+#$ -N gb_ZZZ
+#$ -j y
+#$ -l ngpus=1,rcpus=1
+#$ -q gpu_long
+#$ -P kenprj
+#$ -m abe
+#$ -M james.robertson@stonybrook.edu
+set -x
+
+module unload PrgEnv-cray
+module load PrgEnv-pgi
+module load netcdf
+
+export AMBERHOME=/home/jamesr/bin/amber16
+export PATH=$AMBERHOME/bin:$PATH
+export LD_LIBRARY_PATH=$AMBERHOME/lib:$LD_LIBRARY_PATH
+runsander=$AMBERHOME/bin/pmemd.cuda
+P=$PWD
+#cd $P
+
+cd $TMPDIR
+cp $P/md.in .
+cp $P/ZZZ.hmr.parm7 .
+cp $P/step9.ZZZ.rst7 .
+
+$runsander -O -i md.in -o ZZZ.mdout -p ZZZ.hmr.parm7 \
+-c step9.ZZZ.rst7 -r ZZZ.rst7 -x ZZZ.nc
+
+cp $TMPDIR/ZZZ.mdout $P/OUT/
+cp $TMPDIR/ZZZ.rst7 $P/RST/
+cp $TMPDIR/ZZZ.nc $P/TRAJ/
+
+wait
+#
