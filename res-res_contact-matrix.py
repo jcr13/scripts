@@ -6,8 +6,9 @@ from itertools import izip
 import subprocess
 from subprocess import call
 import glob
+from aa_321_123 import shorten
 
-d = {'C': 'CYS', 'D': 'ASP', 'S': 'SER', 'Q': 'GLN', 'K': 'LYS',
+d2 = {'C': 'CYS', 'D': 'ASP', 'S': 'SER', 'Q': 'GLN', 'K': 'LYS',
         'I': 'ILE', 'P': 'PRO', 'T': 'THR', 'F': 'PHE', 'N': 'ASN', 
         'G': 'GLY', 'H': 'HIS', 'L': 'LEU', 'R': 'ARG', 'W': 'TRP', 
         'A': 'ALA', 'V':'VAL', 'E': 'GLU', 'Y': 'TYR', 'M': 'MET'}
@@ -434,7 +435,7 @@ def lengthen(x):
 
     y = ''
     for i in range(len(x)):
-        y += d[x[i]]
+        y += d2[x[i]]
     z = [y[i:i+3] for i in range(0, len(y), 3)]
     #print "%s\n" % (z)
     return z
@@ -475,18 +476,63 @@ def pop_matrix():
     
     proc = subprocess.call('paste %s/*.dat > res-res_matrix.dat' % outdir, shell=True)
     
-# Convert single letter aa to three letter,  may need to manipulate
-#   dictionary 'd' depending on input or format input for this script.
+# replace residue w/ top8000 data
 def mat_search_replace(text, dic):
     for i, j in  dic.iteritems():
         text = text.replace(i, j)
     #return text
     print(text)
 
+# stdout redirected to 3gb1_res-res_restraints.tmp, then cleaned with clean_res-res_restraints.sh
+# and redirected to 3gb1_res-res_restraints.txt
+def mat_assoc(text, dic):
+    for i, j in dic.iteritems():
+        if int(j) > 150000:
+            replaced_pair = (i)
+            print(replaced_pair)
+        else:
+            pass
+
+# write a two column file that contains the residue number for all possible res-res
+#   contacts that are in 3gb1_res-res_restraints.txt (satisfy top 50% of top8000)
+def restraints():
+    llen =  len(aa_seq)
+    res1list = []
+    res2list = []
+    resfile = open('3gb1_res-res_restraints.txt', 'r')
+    for line in resfile.readlines():
+        line = line.strip()
+        x = line.split('-')
+        aa1 = shorten(x[0])
+        aa2 = shorten(x[1])
+        res1list.append(aa1)
+        res2list.append(aa2)
+    outfile = 'pseudo_evolution_contacts.dat'
+    with open(outfile, 'w') as outp:
+        for x,y in izip(res1list,res2list):
+            res1 = [i+1 for i, s in enumerate(aa_seq) if x in s]
+            res2 = [i+1 for i, s in enumerate(aa_seq) if y in s]
+            res1res2 = list(itertools.product(res1, res2))
+            # make sure residues are more than 3 apart
+            for a,b in res1res2:
+                diff = abs(a-b)
+                if diff > 3:
+                    aas = "%s\t%s\n" % (a, b)
+                    outp.write(aas)
+                    print(a,x,b,y)
+                else:
+                    pass
+    outp.close()
+
+
 #lengthen(aa_seq)
-
+#
 #res_res()
-
+#
 #pop_matrix()
-
-mat_search_replace(res, resd)
+#
+#mat_search_replace(res, resd)
+#
+#mat_assoc(res, resd)
+#
+restraints()
