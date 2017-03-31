@@ -24,7 +24,7 @@ def shorten(x):
     for i in range(len(x)/3):
         y += d[x[3*i:3*i+3]]
         #return y
-    print(y)
+    #print(y)
 
 def lengthen(x):
     if len(x) % 1 != 0:
@@ -35,10 +35,11 @@ def lengthen(x):
         y += d2[x[i]]
         #return y
     z = [y[i:i+3] for i in range(0, len(y), 3)]
-    print "%s\n" % (z)
+    return(z)
+    #print "%s\n" % (z)
 
 
-lengthen('MTYKLILNGKTLKGETTTEAVDAATAEKVFKQYANDNGVDGEWTYDDATKTFTVTE')
+#lengthen('MTYKLILNGKTLKGETTTEAVDAATAEKVFKQYANDNGVDGEWTYDDATKTFTVTE')
 
 #shorten('ARGHISLEULEULYS')
 
