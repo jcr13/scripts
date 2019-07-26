@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+from meld.system import GeometricTemperatureScaler
+
+
+temperature_scaler = GeometricTemperatureScaler(0, 0.6, 300., 450.)
+
+x = ZZZ
+
+with open('alpha.%i.dat' % x, 'r') as a_in:
+    for line in a_in:
+        alpha = float(line)
+        temp = temperature_scaler(alpha)
+        print(temp)

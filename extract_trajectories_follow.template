@@ -1,0 +1,59 @@
+#!/bin/bash
+#$ -R yes
+#$ -V
+#$ -cwd
+#$ -N ex_SYS
+#$ -j y
+#$ -t 1-30
+#$ -l highio=1
+#$ -q cpu_short
+#$ -P kenprj
+#$ -m abe
+#$ -M james.robertson@stonybrook.edu
+set -x
+
+# this works for extracting traj - is it enough for other analysis?
+export PATH="/home/jamesr/anaconda2/envs/MELD/bin:$PATH"
+source activate MELD
+# this also works
+#export PATH=/home/aperez/Source/anaconda/envs/BigStep/bin:$PATH
+#source activate BigStep
+# set amberhome
+export AMBERHOME="/home/jamesr/bin/amber16"
+source $AMBERHOME/amber.sh
+export cpptraj="$AMBERHOME/bin/cpptraj"
+
+for sys in SYS
+#for sys in 1kaf 1v74 1nd9 1iio 1a6s 1emw
+do
+    DATADIR=/cavern/jamesr/nonthreadable/meld_candidates/$sys
+    #DATADIR=/cavern/jamesr/nonthreadable/group_submission/$sys
+    TRAJDIR=$DATADIR/follow_traj
+    #TRAJDIR=/cavern/jamesr/nonthreadable/meld_candidates/$sys/follow_traj
+    if [ ! -d "$TRAJDIR" ];
+    then
+        mkdir $TRAJDIR
+    else
+        ##echo "WARNING: $TRAJDIR already exists"
+        rm -rf $TRAJDIR && mkdir $TRAJDIR
+    fi
+    
+    cd $DATADIR
+    #rsync -avu Data topol.prmtop $TMPDIR
+    #cd $TMPDIR
+ 
+    a=`perl -e 'print $ARGV[0]-1;' $SGE_TASK_ID`
+    b=`perl -e 'printf("%02i", $ARGV[0]-1);' $SGE_TASK_ID`
+    extract_trajectory follow_structure --replica $a $TRAJDIR/follow.$b.pdb
+
+    # convert pdb to netcdf
+    cat > $TRAJDIR/follow_traj.$sys.$b.in <<EOF
+    parm topol.prmtop
+    trajin $TRAJDIR/follow.$b.pdb
+    trajout $TRAJDIR/follow.$b.nc
+EOF
+    $cpptraj -i $TRAJDIR/follow_traj.$sys.$b.in > $TRAJDIR/follow_traj.$sys.$b.out
+    rm $TRAJDIR/follow.$b.pdb
+    # copy back to traj dir 
+    #rsync -avu follow.$b.nc $TRAJDIR
+done
